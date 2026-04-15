@@ -19,20 +19,21 @@ A lightweight machine language monitor for the Commodore 64, written in 6502 ass
 
 ## Overview
 
-Code Probe is a software-based alternative to hardware cartridge monitors such as the original Commodore Machine Language Monitor and the Action Replay freezer. It is an assembly-language rewrite of the original BASIC-based *Code Probe 2.0* from 1985, rebuilt in 6502 assembly using Kick Assembler and released as *Code Probe 2.1*.
+Code Probe is a software-based alternative to hardware cartridge monitors such as Action Replay. The current version, 2.1, is an assembly language restoration of the disassembled machine code of the original 1988 version, optimized for maintenance and further development with Kick Assembler. 
 
-The monitor was inspired by the DOS `DEBUG` utility and presents a green-on-black, terminal-style user interface. All numeric input is hexadecimal. Addresses are 4 digits, byte values are 2 digits, and device numbers are 2 digits.
+The design of `Code Probe` was inspired by the DOS `DEBUG` utility, and presents a similar terminal-style user interface and commands. All numeric input is hexadecimal. Addresses are 4 digits, byte values are 2 digits, and device numbers are 2 digits.
 
 ### Features
 
-- **Memory inspection** -- hex dump with ASCII character display.
-- **Memory editing** -- interactive alter mode with cursor navigation and auto-advance.
-- **Register management** -- view and modify all CPU registers and processor status flags.
-- **Memory operations** -- fill and transfer (copy) arbitrary blocks of memory.
-- **File I/O** -- save and load PRG and SEQ files to/from disk.
-- **Program execution** -- run machine language programs with a full shadow register load and BRK-based return to the monitor.
-- **Directory listing** -- list files on a connected disk device.
-- **Screen control** -- clear the display with a single command.
+- **Memory Inspection** - Hex dump with ASCII character display.
+- **Memory Editing** - Interactive alter mode with cursor navigation and auto-advance.
+- **Register Management** - View and modify all CPU registers and processor status flags.
+- **Memory Operations** - Fill and transfer (copy) arbitrary blocks of memory.
+- **File I/O** - Save and load PRG and SEQ files to/from disk.
+- **Program Execution** - Run machine language programs with a full shadow register load and BRK-based return to the monitor.
+- **Directory Listing** - List files on a connected disk device.
+- **Screen Control** - Clear the display with a single command.
+- **Exit to BASIC** - Exit to BASIC and return to Code Probe with `SYS 49152`.
 
 ## Loading and Starting
 
@@ -53,59 +54,38 @@ Use the VICE **Autostart** feature to load `codeprobe.prg` directly, or type the
 
 ### What Happens at Startup
 
-1. The screen border and background are set to black.
-2. Text color is set to green.
-3. The screen is cleared.
-4. The title banner is displayed: `CODE PROBE (2.1) - ROHIN GOSLING`
-5. The BRK interrupt vector is installed (enabling return from executed programs).
-6. Shadow registers are initialised to default values.
-7. The monitor prompt (`: `) appears.
+1. Screen is cleared, colors set, and title banner displayed, `CODE PROBE (2.1) - ROHIN GOSLING`.
+2. The BRK interrupt vector is installed (enabling return from executed programs).
+3. Shadow registers are initialized to default values.
+4. The monitor prompt (`: `) appears.
 
 ## Command Reference
 
 All address and count values are hexadecimal. Addresses are 4 digits, byte values are 2 digits, device numbers are 2 digits (typically `08` for disk).
 
-```
-┌─────────┬──────────────────────────────────────────────┬───────────────────────────────────────────────────┐
-│ Command │ Syntax                                       │ Description                                       │
-├─────────┼──────────────────────────────────────────────┼───────────────────────────────────────────────────┤
-│   D     │ D <start> <end>                              │ Hex dump memory from start to end (inclusive).    │
-├─────────┼──────────────────────────────────────────────┼───────────────────────────────────────────────────┤
-│   A     │ A <address>                                  │ Enter alter mode to write hex bytes to RAM.       │
-├─────────┼──────────────────────────────────────────────┼───────────────────────────────────────────────────┤
-│   R     │ R                                            │ Display all shadow registers.                     │
-├─────────┼──────────────────────────────────────────────┼───────────────────────────────────────────────────┤
-│   R     │ R <register> <value>                         │ Set a shadow register.                            │
-├─────────┼──────────────────────────────────────────────┼───────────────────────────────────────────────────┤
-│   RF    │ RF                                           │ Display registers with expanded flag bits.        │
-├─────────┼──────────────────────────────────────────────┼───────────────────────────────────────────────────┤
-│   RF    │ RF <flag> <0|1>                              │ Set an individual processor status flag.          │
-├─────────┼──────────────────────────────────────────────┼───────────────────────────────────────────────────┤
-│   F     │ F <address> <count> <value>                  │ Fill memory with a byte value.                    │
-├─────────┼──────────────────────────────────────────────┼───────────────────────────────────────────────────┤
-│   T     │ T <source> <count> <destination>             │ Copy memory from source to destination.           │
-├─────────┼──────────────────────────────────────────────┼───────────────────────────────────────────────────┤
-│   G     │ G <address>                                  │ Execute machine code at address.                  │
-├─────────┼──────────────────────────────────────────────┼───────────────────────────────────────────────────┤
-│   S     │ S "<file>" <dev> <start> <end> [<load_addr>] │ Save memory to file. With load_addr = PRG file.   │
-├─────────┼──────────────────────────────────────────────┼───────────────────────────────────────────────────┤
-│   L     │ L <dev>                                      │ List files on device.                             │
-├─────────┼──────────────────────────────────────────────┼───────────────────────────────────────────────────┤
-│   L     │ L "<file>" <dev>                             │ Load PRG file (uses file's load address).         │
-├─────────┼──────────────────────────────────────────────┼───────────────────────────────────────────────────┤
-│   L     │ L "<file>" <dev> <address>                   │ Load SEQ file to specified address.               │
-├─────────┼──────────────────────────────────────────────┼───────────────────────────────────────────────────┤
-│   CLS   │ CLS                                          │ Clear the screen.                                 │
-├─────────┼──────────────────────────────────────────────┼───────────────────────────────────────────────────┤
-│   EXIT  │ EXIT                                         │ Exit to BASIC. Re-enter with SYS 49152.           │
-└─────────┴──────────────────────────────────────────────┴───────────────────────────────────────────────────┘
-```
+| Command | Syntax                                           | Description                                     |
+|---------|--------------------------------------------------|-------------------------------------------------|
+| `D`     | `D <start> <end>`                                | Hex dump memory from start to end (inclusive).  |
+| `A`     | `A <address>`                                    | Enter alter mode to write hex bytes to RAM.     |
+| `R`     | `R`                                              | Display all shadow registers.                   |
+| `R`     | `R <register> <value>`                           | Set a shadow register.                          |
+| `RF`    | `RF`                                             | Display registers with expanded flag bits.      |
+| `RF`    | `RF <flag> <0\|1>`                               | Set an individual processor status flag.        |
+| `F`     | `F <address> <count> <value>`                    | Fill memory with a byte value.                  |
+| `T`     | `T <source> <count> <destination>`               | Copy memory from source to destination.         |
+| `G`     | `G <address>`                                    | Execute machine code at address.                |
+| `S`     | `S "<file>" <dev> <start> <end> [<load_addr>]`   | Save memory to file. With load_addr = PRG file. |
+| `L`     | `L <dev>`                                        | List files on device.                           |
+| `L`     | `L "<file>" <dev>`                               | Load PRG file (uses file's load address).       |
+| `L`     | `L "<file>" <dev> <address>`                     | Load SEQ file to specified address.             |
+| `CLS`   | `CLS`                                            | Clear the screen.                               |
+| `EXIT`  | `EXIT`                                           | Exit to BASIC. Re-enter with SYS 49152.         |
 
 See [`docs/user-manual.pdf`](docs/user-manual.pdf) for the full user manual, including worked tutorials, the memory map, error messages, and a detailed description of the shadow register and BRK return mechanisms.
 
 ## Building From Source
 
-Code Probe is a single-file assembly project built with [Kick Assembler](http://www.theweb.dk/KickAssembler/). Java is required.
+The current version of Code Probe is a single-file assembly project built with [Kick Assembler](http://www.theweb.dk/KickAssembler/). Java is required.
 
 **Assemble:**
 

@@ -3,6 +3,7 @@
 **Program:** Code Probe<br>
 **Version:** 2.1<br>
 **Release:** 1988<br>
+**Last Update:** 2026<br>
 **Platform:** Commodore 64<br>
 **Author:** Rohin Gosling<br>
 
@@ -38,26 +39,21 @@
 
 ## 1. Introduction
 
-Code Probe is a lightweight machine language monitor for the Commodore 64. It
-provides a software-based alternative to hardware cartridge monitors, allowing
-you to inspect and modify memory, manage CPU registers, load and save files,
-and execute machine language programs directly from the keyboard.
+Code Probe is a software-based alternative to hardware cartridge monitors such as Action Replay.
 
-Code Probe was inspired by the DOS `DEBUG` utility and is designed with a
-green-screen aesthetic: black border, black background, and green text.
+The design of `Code Probe` was inspired by the DOS `DEBUG` utility, and presents a similar terminal-style user interface and commands. All numeric input is hexadecimal. Addresses are 4 digits, byte values are 2 digits, and device numbers are 2 digits.
 
 ### Features
 
-- **Memory inspection** -- hex dump with ASCII character display.
-- **Memory editing** -- interactive alter mode with cursor navigation.
-- **Register management** -- view and modify all CPU registers and processor
-  status flags.
-- **Memory operations** -- fill and transfer (copy) blocks of memory.
-- **File I/O** -- save and load programs and data to/from disk.
-- **Program execution** -- run machine language programs with full register
-  load and BRK-based return to the monitor.
-- **Directory listing** -- list files on a connected disk device.
-- **Screen control** -- clear the display with a single command.
+- **Memory Inspection** - Hex dump with ASCII character display.
+- **Memory Editing** - Interactive alter mode with cursor navigation and auto-advance.
+- **Register Management** - View and modify all CPU registers and processor status flags.
+- **Memory Operations** - Fill and transfer (copy) arbitrary blocks of memory.
+- **File I/O** - Save and load PRG and SEQ files to/from disk.
+- **Program Execution** - Run machine language programs with a full shadow register load and BRK-based return to the monitor.
+- **Directory Listing** - List files on a connected disk device.
+- **Screen Control** - Clear the display with a single command.
+- **Exit to BASIC** - Exit to BASIC and return to Code Probe with `SYS 49152`.
 
 ---
 
